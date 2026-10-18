@@ -66,7 +66,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 /* hero */
 .hero { position: relative; overflow: hidden; }
 #hero-net { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: .8; }
-.hero .inner { position: relative; padding-block: 4.5rem 9rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3rem; align-items: center; pointer-events: none; }
+.hero .inner { position: relative; padding-block: 4.5rem clamp(11rem, 12vw, 13rem); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3rem; align-items: center; pointer-events: none; }
 .hero .inner > * { pointer-events: auto; }
 .hero-copy { display: grid; gap: 1.3rem; min-width: 0; }
 .role { font-family: var(--mono); font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent2); margin: 0; }
@@ -578,16 +578,17 @@ p { margin: 0; max-width: 64ch; }
     for (var i = 0; i < 400; i++) seq.push("ATGC"[r() * 4 | 0]);
     var PAIR = { A: "T", T: "A", G: "C", C: "G" };
     function baseCol(b) { return b === "A" ? T.accent : b === "T" ? T.warm : b === "G" ? T.accent2 : T.muted; }
+    function smooth(a, b, x) { var t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
     var hero = s.c.parentElement;
     hero.addEventListener("pointermove", function (e) { mouse = pos(s.c, e); });
     hero.addEventListener("pointerleave", function () { mouse = null; });
     function seed(s) { for (var k = 0; k < 14; k++) { s.t += 300; step(s, 300); } }
     function step(s, dt) {
-      phase += dt * .0008 * (mouse && mouse.x < G.x1 ? 2.5 : 1);
+      phase += dt * .0007 * (mouse && mouse.x < G.x1 && Math.abs(mouse.y - G.cy) < G.A * 2 ? 2.8 : 1);
       spawn += dt;
       if (spawn > 170) {
         spawn = 0; var L0 = layers[0], b = seq[r() * seq.length | 0];
-        pulses.push({ li: -1, from: { x: G.x1 + 20, y: G.cy + (r() - .5) * G.A * 2.6 }, to: L0[r() * L0.length | 0], t: 0, col: baseCol(b) });
+        pulses.push({ li: -1, from: { x: G.x1 + G.A, y: G.cy + (r() - .5) * G.A * 3 }, to: L0[r() * L0.length | 0], t: 0, col: baseCol(b) });
       }
       pulses.forEach(function (p) {
         p.t += dt / 650;
@@ -601,12 +602,18 @@ p { margin: 0; max-width: 64ch; }
     }
     return {
       resize: function (s) {
-        var narrow = s.w < 760;
-        G.A = Math.min(48, s.h * .09); G.cy = s.h - G.A - (narrow ? 22 : 34); G.ny = narrow ? G.cy - G.A * 1.4 : s.h * .5; G.x1 = s.w * (narrow ? .58 : .55);
-        var lx = narrow ? [.7, .83, .95] : [.65, .75, .85, .95], ln = narrow ? [5, 6, 3] : [6, 8, 7, 4];
+        var narrow = s.w < 760, content = Math.min(s.w, 1180);
+        G.A = narrow ? 34 : Math.max(40, Math.min(66, content * .05));      // helix radius scales with the layout
+        G.k = 2 * Math.PI / (G.A * 3.6);                                    // pitch ≈ 1.8 × diameter, like B-DNA
+        G.sc = G.A / 48;
+        G.cy = s.h - G.A - (narrow ? 26 : 34);
+        G.ny = narrow ? G.cy - G.A * 1.6 : s.h * .5;
+        G.x0 = Math.max(0, (s.w - 1180) / 2 - 140);                          // don't run into empty margin on wide screens
+        G.x1 = (s.w - content) / 2 + content * (narrow ? .58 : .56);
+        var lx = narrow ? [.7, .83, .95] : [.65, .75, .85, .95], ln = narrow ? [5, 6, 3] : [6, 8, 7, 4], off = (s.w - content) / 2;
         layers = lx.map(function (fx, li) {
-          var n = ln[li], span = Math.min(narrow ? G.A * 3 : s.h * .78, n * 46), arr = [];
-          for (var k = 0; k < n; k++) arr.push({ x: fx * s.w, y: G.ny - span / 2 + span * (k + .5) / n, glow: 0 });
+          var n = ln[li], span = Math.min(narrow ? G.A * 3.4 : s.h * .78, n * 46), arr = [];
+          for (var k = 0; k < n; k++) arr.push({ x: off + fx * content, y: G.ny - span / 2 + span * (k + .5) / n, glow: 0 });
           return arr;
         });
         pulses = []; seed(s);
@@ -614,43 +621,62 @@ p { margin: 0; max-width: 64ch; }
       step: step,
       draw: function (s) {
         var ctx = s.ctx; ctx.clearRect(0, 0, s.w, s.h);
-        var pts = [], dx = 15;
-        for (var x = -dx, i = 0; x < G.x1 + 90; x += dx, i++) {
-          var u = Math.max(0, (x - (G.x1 - 140)) / 230), sp = 1 + u * u * 2.2, ph = x * .03 + phase;
-          pts.push({ x: x, y1: G.cy + G.A * Math.sin(ph) * sp, y2: G.cy - G.A * Math.sin(ph) * sp, z: Math.cos(ph), b: seq[i % seq.length], u: Math.min(1, u) });
+        var A = G.A, sc = G.sc, dx = Math.max(5, 2 * Math.PI / G.k / 22), items = [], pts = [];
+        for (var x = G.x0 - dx, i = 0; x < G.x1 + A * 2.2; x += dx, i++) {
+          var u = Math.max(0, (x - (G.x1 - A * 2.5)) / (A * 4.5)), sp = 1 + u * u * 2.4, ph = x * G.k + phase, sn = Math.sin(ph), cs = Math.cos(ph);
+          var fade = smooth(G.x0, G.x0 + A * 4, x) * (1 - Math.min(1, u));
+          pts.push({ x: x, i: i, y: [G.cy + A * sn * sp, G.cy - A * sn * sp], z: [cs, -cs], fade: fade, u: u });
         }
+        // backbone segments and phosphate beads, one per strand
+        for (var k = 0; k < pts.length - 1; k++) {
+          var p = pts[k], q = pts[k + 1];
+          for (var sdx = 0; sdx < 2; sdx++) {
+            var z = (p.z[sdx] + q.z[sdx]) / 2, f = (p.fade + q.fade) / 2;
+            if (f <= .01) continue;
+            items.push({ kind: "seg", z: z, x1: p.x, y1: p.y[sdx], x2: q.x, y2: q.y[sdx], col: sdx ? T.accent : T.accent2, f: f });
+            if (k % 2 === 0) items.push({ kind: "bead", z: p.z[sdx] + .01, x: p.x, y: p.y[sdx], col: sdx ? T.accent : T.accent2, f: p.fade });
+          }
+          // base pair every ~third step
+          if (k % 3 === 0 && p.u < .5 && p.fade > .01) {
+            var b = seq[p.i % seq.length], my = (p.y[0] + p.y[1]) / 2;
+            items.push({ kind: "base", z: p.z[0] * .5 - .02, x: p.x, ya: p.y[0], yb: my, col: baseCol(b), f: p.fade * (1 - p.u * 2), letter: b });
+            items.push({ kind: "base", z: p.z[1] * .5 - .02, x: p.x, ya: my, yb: p.y[1], col: baseCol(PAIR[b]), f: p.fade * (1 - p.u * 2), letter: PAIR[b] });
+          }
+        }
+        items.sort(function (a, b) { return a.z - b.z; });
         ctx.lineCap = "round";
-        // base pairs
-        pts.forEach(function (p) {
-          if (p.u > .55) return;
-          var a = (1 - p.u / .55) * (.22 + .3 * (1 - Math.abs(p.z))), my = (p.y1 + p.y2) / 2;
-          ctx.lineWidth = 2.2; ctx.globalAlpha = a;
-          ctx.strokeStyle = baseCol(p.b); ctx.beginPath(); ctx.moveTo(p.x, p.y1); ctx.lineTo(p.x, my); ctx.stroke();
-          ctx.strokeStyle = baseCol(PAIR[p.b]); ctx.beginPath(); ctx.moveTo(p.x, my); ctx.lineTo(p.x, p.y2); ctx.stroke();
-        });
-        // backbones, shaded by depth
-        [1, -1].forEach(function (side) {
-          for (var k = 0; k < pts.length - 1; k++) {
-            var p = pts[k], q = pts[k + 1], z = side * (p.z + q.z) / 2, fade = 1 - (p.u + q.u) / 2;
-            ctx.globalAlpha = Math.max(0, (.2 + .45 * (z + 1) / 2) * fade);
-            ctx.strokeStyle = side > 0 ? T.accent2 : T.accent; ctx.lineWidth = 1.4 + 1.6 * (z + 1) / 2;
-            ctx.beginPath(); ctx.moveTo(p.x, side > 0 ? p.y1 : p.y2); ctx.lineTo(q.x, side > 0 ? q.y1 : q.y2); ctx.stroke();
+        items.forEach(function (it) {
+          var d = (it.z + 1) / 2;                      // 0 = back, 1 = front
+          if (it.kind === "seg") {
+            if (d > .55) { ctx.globalAlpha = .12 * it.f * d; ctx.strokeStyle = it.col; ctx.lineWidth = (8 + 6 * d) * sc; ctx.beginPath(); ctx.moveTo(it.x1, it.y1); ctx.lineTo(it.x2, it.y2); ctx.stroke(); }
+            ctx.globalAlpha = (.25 + .7 * d) * it.f; ctx.strokeStyle = it.col; ctx.lineWidth = (2 + 4 * d) * sc;
+            ctx.beginPath(); ctx.moveTo(it.x1, it.y1); ctx.lineTo(it.x2, it.y2); ctx.stroke();
+          } else if (it.kind === "bead") {
+            var rad = (2.2 + 3.2 * d) * sc;
+            ctx.globalAlpha = (.3 + .7 * d) * it.f; ctx.fillStyle = it.col; ctx.beginPath(); ctx.arc(it.x, it.y, rad, 0, 7); ctx.fill();
+            if (d > .5) { ctx.globalAlpha = .5 * (d - .5) * 2 * it.f; ctx.fillStyle = T.surface; ctx.beginPath(); ctx.arc(it.x - rad * .3, it.y - rad * .35, rad * .38, 0, 7); ctx.fill(); }
+          } else {
+            var len = Math.abs(it.yb - it.ya);
+            ctx.globalAlpha = (.2 + .55 * d) * Math.max(0, it.f); ctx.strokeStyle = it.col; ctx.lineWidth = (2.2 + 2 * d) * sc;
+            var dir = it.yb > it.ya ? 1 : -1;
+            ctx.beginPath(); ctx.moveTo(it.x, it.ya + dir * 3 * sc); ctx.lineTo(it.x, it.yb - dir * 1.5 * sc); ctx.stroke();
+            if (sc >= 1 && len > A * .8 && d > .4) {
+              ctx.globalAlpha = .55 * it.f; ctx.fillStyle = T.ink; ctx.font = "500 " + Math.round(9 * sc) + "px " + MONO; ctx.textAlign = "center";
+              ctx.fillText(it.letter, it.x + 9 * sc, (it.ya + it.yb) / 2 + 3);
+            }
           }
         });
         // unzipped strand ends reach into the first layer
-        var L0 = layers[0];
-        pts.forEach(function (p) {
-          if (p.u < .35 || p.u > .9) return;
-          L0.forEach(function (n) {
-            ctx.globalAlpha = .07; ctx.strokeStyle = T.muted; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(p.x, p.y1); ctx.lineTo(n.x, n.y); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(p.x, p.y2); ctx.lineTo(n.x, n.y); ctx.stroke();
-          });
+        var L0 = layers[0]; ctx.lineWidth = 1; ctx.strokeStyle = T.muted;
+        pts.forEach(function (p, k) {
+          if (k % 2 || p.u < .3 || p.u > .95) return;
+          L0.forEach(function (n) { [0, 1].forEach(function (sdx) {
+            ctx.globalAlpha = .06; ctx.beginPath(); ctx.moveTo(p.x, p.y[sdx]); ctx.lineTo(n.x, n.y); ctx.stroke();
+          }); });
         });
         // network
-        ctx.lineWidth = 1; ctx.strokeStyle = T.muted;
         for (var li = 0; li < layers.length - 1; li++) layers[li].forEach(function (a) { layers[li + 1].forEach(function (b) {
-          ctx.globalAlpha = .1 + .25 * Math.max(a.glow, b.glow) * .6; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          ctx.globalAlpha = .1 + .15 * Math.max(a.glow, b.glow); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
         }); });
         pulses.forEach(function (p) {
           var e = p.t * p.t * (3 - 2 * p.t), x = p.from.x + (p.to.x - p.from.x) * e, y = p.from.y + (p.to.y - p.from.y) * e;
