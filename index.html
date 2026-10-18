@@ -127,6 +127,11 @@ p { margin: 0; max-width: 64ch; }
 .degree.bsc { padding: 0 1.5rem; }
 .degree .when { font: .8rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .degree p { grid-column: 1 / -1; font-size: .98rem; color: var(--muted); }
+.degree.has-logo { grid-template-columns: 3.25rem minmax(0, 1fr) auto; column-gap: 1.25rem; }
+.degree.has-logo p { grid-column: 2 / -1; }
+.degree .logo { grid-row: 1 / span 2; align-self: center; justify-self: center; width: 3.25rem; height: 3.25rem; object-fit: contain; opacity: .9; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .degree .logo { filter: invert(1); opacity: .85; } }
+:root[data-theme="dark"] .degree .logo { filter: invert(1); opacity: .85; }
 
 /* research / project rows */
 .row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 2.5rem; align-items: center; }
@@ -203,6 +208,9 @@ p { margin: 0; max-width: 64ch; }
   .portrait { order: -1; width: 140px; justify-self: start; }
   .xp article, .skills div { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
   .degree { grid-template-columns: minmax(0, 1fr); }
+  .degree.has-logo { grid-template-columns: 2.6rem minmax(0, 1fr); column-gap: 1rem; }
+  .degree.has-logo .when, .degree.has-logo p { grid-column: 2; }
+  .degree .logo { grid-row: 1 / span 3; align-self: start; width: 2.6rem; height: 2.6rem; margin-top: .2rem; }
   .degree.bsc { padding: 0 .2rem; }
   .h-340, .h-320 { height: 290px; }
 }
@@ -234,6 +242,9 @@ p { margin: 0; max-width: 64ch; }
   p, .xp ul { max-width: none; }
   .note { font-size: 9pt; }
   .degree.phd, .degree.bsc { padding: 0; border: 0; }
+  .degree .logo { display: none; }
+  .degree.has-logo { grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; }
+  .degree.has-logo p { grid-column: 1 / -1; }
   .degree p { font-size: 9pt; }
   .stats { display: flex; gap: 1rem; } .stat { border: 0; padding: 0; display: block; } .stat b { font-size: 10pt; } .stat span { font-size: 8pt; margin-left: .3rem; }
   .xp { gap: .3rem; } .xp article { grid-template-columns: 7rem 1fr; gap: .8rem; break-inside: avoid; } .xp h3 { font-size: 10pt; } .xp .when { font-size: 8pt; padding-top: 0; }
@@ -303,12 +314,14 @@ p { margin: 0; max-width: 64ch; }
   <section class="inner sec" id="education">
     <h2>Education</h2>
     <div class="body edu">
-      <div class="degree phd">
+      <div class="degree phd has-logo">
+        <img class="logo" src="logos/usc.png" alt="University of South Carolina logo" width="200" height="192">
         <h3>Ph.D. in Computer Science</h3>
         <span class="when">Jan 2025 – 2031 (expected)</span>
         <p>University of South Carolina · AI Institute of South Carolina · Advisor: <a href="https://www.linkedin.com/in/homayoun-valafar-b1b99434/" target="_blank" rel="noopener">Dr. Homayoun Valafar</a>. Research focus: AI and bioinformatics for genomic and proteomic data.</p>
       </div>
-      <div class="degree bsc">
+      <div class="degree bsc has-logo">
+        <img class="logo" src="logos/fum.png" alt="Ferdowsi University of Mashhad logo" width="138" height="192">
         <h3>B.Sc. in Computer Engineering</h3>
         <span class="when">2016 – 2021</span>
         <p>Ferdowsi University of Mashhad</p>
