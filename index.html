@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kasra Korminejad</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Kasra Korminejad, PhD student in Computer Science at the University of South Carolina, building AI and bioinformatics methods to solve biological problems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: hero with headshot over a live gene network; below, one continuous page where each section has a
+   sticky label in a left gutter and content on the right, like a well-set CV rather than a slide deck.
+   Palette: H&E stain. Eosin pink and hematoxylin blue on a cool slide-glass white. */
+:root {
+  --bg: #f4f6f7;
+  --surface: #ffffff;
+  --ink: #15201f;
+  --muted: #5a6664;
+  --line: #dde3e3;
+  --accent: #b02e63;      /* eosin */
+  --accent2: #3b4fa8;     /* hematoxylin */
+  --warm: #d4862a;        /* low-confidence amber */
+  --accent-soft: #f7e3eb;
+  --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1314; --surface: #151c1e; --ink: #e5ebea; --muted: #97a4a2; --line: #253033;
+    --accent: #f08bb3; --accent2: #93a3f5; --warm: #f0aa55; --accent-soft: #3a2130; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1314; --surface: #151c1e; --ink: #e5ebea; --muted: #97a4a2; --line: #253033;
+  --accent: #f08bb3; --accent2: #93a3f5; --warm: #f0aa55; --accent-soft: #3a2130; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+.inner {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+/* nav */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); }
+.top .inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: .8rem; }
+.mark { font-family: var(--display); font-weight: 800; font-size: 1.05rem; color: var(--ink); text-decoration: none; letter-spacing: -.01em; }
+.mark span { color: var(--accent); }
+.top nav { display: flex; gap: 1.4rem; font-family: var(--mono); font-size: .78rem; }
+.top nav a { color: var(--muted); text-decoration: none; }
+.top nav a:hover { color: var(--accent); }
+
+/* hero */
+.hero { position: relative; overflow: hidden; }
+#hero-net { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: .8; }
+.hero .inner { position: relative; padding-block: 4.5rem 4rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3rem; align-items: center; pointer-events: none; }
+.hero .inner > * { pointer-events: auto; }
+.hero-copy { display: grid; gap: 1.3rem; min-width: 0; }
+.role { font-family: var(--mono); font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent2); margin: 0; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2.8rem, 7.5vw, 5.6rem); line-height: .95; letter-spacing: -.035em; margin: 0; }
+.hero .lede { font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.5; max-width: 40ch; margin: 0; }
+.lede em { color: var(--accent); }
+.portrait { width: clamp(180px, 22vw, 260px); height: auto; aspect-ratio: 1; align-self: center; justify-self: center; border-radius: 50%; object-fit: cover; display: block; max-width: 100%;
+  border: 6px solid var(--surface); box-shadow: 0 0 0 1px var(--line), 0 20px 50px -20px color-mix(in srgb, var(--accent2) 45%, transparent); }
+.actions { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: .45rem; font: 500 .8rem var(--mono); text-decoration: none;
+  padding: .55rem .9rem; border-radius: 6px; border: 1px solid var(--line); color: var(--ink); background: var(--surface); cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.btn.primary:hover { color: var(--surface); filter: brightness(1.08); }
+.status { display: inline-flex; gap: .55rem; align-items: center; font: .78rem var(--mono); padding: .4rem .8rem; background: var(--accent-soft); color: var(--accent); border-radius: 999px; justify-self: start; }
+.status::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; flex: none; }
+@keyframes pulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .status::before { animation: none; } }
+
+/* sections: sticky label gutter + content */
+main { padding-block: 1rem 0; }
+.sec { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 3rem; padding-block: 3rem; }
+.sec > h2 {
+  font-family: var(--mono); font-weight: 500; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
+  margin: 0; padding-top: .45rem; align-self: start; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 4.5rem);
+}
+.body { display: grid; gap: 2.5rem; min-width: 0; }
+h3 { font-family: var(--display); font-weight: 600; font-size: 1.45rem; line-height: 1.2; margin: 0; letter-spacing: -.015em; text-wrap: balance; }
+p { margin: 0; max-width: 64ch; }
+.meta { font-family: var(--mono); font-size: .76rem; color: var(--muted); letter-spacing: .02em; }
+.kicker { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; font: .74rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.pill { font: 500 .66rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent2); background: color-mix(in srgb, var(--accent2) 12%, transparent); padding: .12rem .45rem; border-radius: 4px; }
+
+/* about */
+.about { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 3rem; align-items: start; }
+.about .big { font-size: 1.3rem; line-height: 1.5; }
+.about .copy { display: grid; gap: 1rem; }
+.glance { display: grid; gap: .9rem; margin: 0; }
+.glance div { display: grid; gap: .1rem; padding-left: .9rem; border-left: 2px solid var(--accent2); }
+.glance div:nth-child(2) { border-color: var(--accent); }
+.glance dt { font: .72rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.glance dd { margin: 0; font-family: var(--display); font-weight: 600; font-size: 1.05rem; }
+
+/* education */
+.edu { display: grid; gap: 1rem; }
+.degree { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .3rem 2rem; align-items: baseline; }
+.degree.phd { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.4rem 1.5rem; }
+.degree.bsc { padding: 0 1.5rem; }
+.degree .when { font: .8rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.degree p { grid-column: 1 / -1; font-size: .98rem; color: var(--muted); }
+
+/* research / project rows */
+.row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 2.5rem; align-items: center; }
+.copy { display: grid; gap: .85rem; min-width: 0; }
+.note { font-size: .95rem; color: var(--muted); border-left: 2px solid var(--accent); padding-left: .9rem; }
+.note strong { color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: .1rem 0 0; }
+.chips li { font: .72rem var(--mono); border: 1px solid var(--line); background: var(--surface); padding: .2rem .55rem; border-radius: 4px; color: var(--muted); }
+.fig { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; display: grid; gap: .7rem; min-width: 0; }
+.fig canvas { width: 100%; display: block; touch-action: pan-y; }
+.fig .cap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; font: .72rem var(--mono); color: var(--muted); }
+.fig .ctl { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; font: .74rem var(--mono); color: var(--muted); }
+.fig input[type=range] { accent-color: var(--accent); width: 9rem; }
+.fig input[type=checkbox] { accent-color: var(--accent); }
+.key { display: inline-flex; align-items: center; gap: .35rem; }
+.key i { width: .7rem; height: .7rem; border-radius: 50%; display: inline-block; }
+.c-acc { background: var(--accent); } .c-acc2 { background: var(--accent2); } .c-warm { background: var(--warm); } .c-mut { background: var(--muted); }
+.h-320 { height: 320px; } .h-340 { height: 340px; }
+
+/* sleep results */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .7rem .8rem; display: grid; gap: .1rem; }
+.stat b { font-family: var(--display); font-weight: 800; font-size: 1.6rem; line-height: 1.1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stat span { font: .7rem var(--mono); color: var(--muted); }
+.arch { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; font: .74rem var(--mono); color: var(--muted); }
+.arch b { font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: .2rem .5rem; }
+
+/* tandem repeats: multi-head reader arm */
+.dna { display: flex; flex-wrap: wrap; font: 500 .95rem var(--mono); line-height: 2.1; letter-spacing: .02em; }
+.dna span { width: 1.15ch; text-align: center; color: var(--muted); transition: color .15s, background .15s; position: relative; }
+.dna span.seen { color: var(--ink); }
+.dna span.hit { color: var(--accent); background: var(--accent-soft); }
+.dna span.base { background: var(--accent2); color: var(--surface); border-radius: 2px; }
+.dna span.head { box-shadow: inset 0 -3px 0 var(--accent2); color: var(--ink); }
+.dna span.match { box-shadow: inset 0 -3px 0 var(--accent); }
+.found { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .4rem; min-height: 1.8rem; font: .74rem var(--mono); }
+.found li { background: var(--accent-soft); color: var(--accent); padding: .15rem .5rem; border-radius: 4px; }
+
+/* publications */
+.pubs { display: grid; gap: 1rem; list-style: none; padding: 0; margin: 0; }
+.pubs li { display: grid; gap: .3rem; }
+
+/* experience */
+.xp { display: grid; gap: 1.8rem; }
+.xp article { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); gap: 1.8rem; }
+.xp article > div { display: grid; gap: .3rem; min-width: 0; }
+.xp .when { font: .78rem var(--mono); color: var(--muted); padding-top: .3rem; font-variant-numeric: tabular-nums; }
+.xp h3 { font-size: 1.15rem; }
+.xp ul { margin: .15rem 0 0; padding-left: 1.1rem; display: grid; gap: .2rem; max-width: 64ch; }
+.sub { font: .74rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: .6rem; }
+
+/* skills */
+.skills { display: grid; gap: 1.2rem; margin: 0; }
+.skills div { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.skills dt { font-family: var(--display); font-weight: 600; font-size: 1.02rem; padding-top: .1rem; }
+.skills dd { margin: 0; }
+
+/* contact */
+.contact { margin-top: 3rem; background: var(--surface); }
+.contact .inner { display: grid; gap: 1.3rem; padding-block: 4rem; }
+.contact h2 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1; letter-spacing: -.03em; margin: 0; max-width: 16ch; }
+.contact code { font: 500 1rem var(--mono); user-select: all; overflow-wrap: anywhere; }
+.contact footer { font: .72rem var(--mono); color: var(--muted); padding-top: 1.5rem; }
+.print-only { display: none; }
+
+@media (max-width: 980px) {
+  .sec { grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
+  .sec > h2 { position: static; }
+  .top nav { display: none; }
+}
+@media (max-width: 760px) {
+  .row, .about { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; }
+  .hero .inner { grid-template-columns: minmax(0, 1fr); gap: 2rem; padding-block: 2.5rem 3rem; }
+  .portrait { order: -1; width: 140px; justify-self: start; }
+  .xp article, .skills div { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
+  .degree { grid-template-columns: minmax(0, 1fr); }
+  .degree.bsc { padding: 0 .2rem; }
+  .h-340, .h-320 { height: 290px; }
+}
+
+/* print: a compact resume */
+@media print {
+  @page { margin: 10mm 12mm; }
+  :root { --bg: #fff; --surface: #fff; --ink: #111; --muted: #444; --line: #ccc; --accent: #8a2450; --accent2: #2c3d85; --accent-soft: #fff; color-scheme: light; }
+  body { font-size: 9.3pt; line-height: 1.28; }
+  .top, #hero-net, .fig, .actions, .status, .portrait, .chips, .no-print, .contact, .glance, .stats + .arch { display: none !important; }
+  .print-only { display: block; }
+  .hero .inner { display: block; padding: 0 0 .4rem; }
+  .hero-copy { gap: .25rem; }
+  h1 { font-size: 22pt; }
+  .hero .lede { display: none; }
+  .about .big, .about .copy p { font-size: 10pt; max-width: none; }
+  main { display: flex; flex-direction: column; }
+  main > .sec { order: 5; } #about { order: 1; } #education { order: 2; } #skills { order: 3; } #research { order: 4; }
+  .contact { order: 9; }
+  #projects, #publications { break-inside: avoid; }
+  .pubs h3 { font-size: 10pt !important; } .pubs li { gap: 0; } .xp ul { gap: 0; margin: 0; } .xp article > div { gap: .05rem; } .sec { padding-block: .25rem; } .sub { margin-top: .2rem; }
+  main { padding: 0; }
+  .sec { display: block; padding-block: .35rem; }
+  .sec > h2 { position: static; font-size: 9pt; border-bottom: 1px solid #bbb; padding: 0 0 2pt; margin-bottom: .35rem; break-after: avoid; }
+  .body { gap: .45rem; }
+  .row, .about { display: block; }
+  .copy { gap: .15rem; }
+  h3 { font-size: 10.5pt; }
+  p, .xp ul { max-width: none; }
+  .note { font-size: 9pt; }
+  .degree.phd, .degree.bsc { padding: 0; border: 0; }
+  .degree p { font-size: 9pt; }
+  .stats { display: flex; gap: 1rem; } .stat { border: 0; padding: 0; display: block; } .stat b { font-size: 10pt; } .stat span { font-size: 8pt; margin-left: .3rem; }
+  .xp { gap: .3rem; } .xp article { grid-template-columns: 7rem 1fr; gap: .8rem; break-inside: avoid; } .xp h3 { font-size: 10pt; } .xp .when { font-size: 8pt; padding-top: 0; }
+  .skills { gap: .25rem; } .skills div { grid-template-columns: 10rem 1fr; gap: 1rem; } .skills dt { font-size: 9.5pt; }
+  .skills dd .chips { display: block !important; } .skills .chips li { display: inline; border: 0; padding: 0; font: 9pt var(--body); color: #111; background: none; }
+  .skills .chips li + li::before { content: ", "; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <a class="mark" href="#top">Kasra<span>.</span></a>
+    <nav aria-label="Sections">
+      <a href="#education">Education</a>
+      <a href="#research">Research</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <canvas id="hero-net" aria-hidden="true"></canvas>
+  <div class="inner">
+    <div class="hero-copy">
+      <p class="role">PhD Student · Computer Science · University of South Carolina</p>
+      <h1>Kasra Korminejad</h1>
+      <p class="lede">I build AI to solve <em>biological problems</em>, from high-dimensional gene expression to protein structure.</p>
+      <div class="actions">
+        <a class="btn primary" href="#contact">Get in touch</a>
+        <a class="btn" href="https://www.linkedin.com/in/kasra-korminejad/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn" href="https://scholar.google.com/citations?user=p_KFLkEAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar ↗</a>
+        <a class="btn" href="https://github.com/Kasrakn" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="btn" href="Kasra_Korminejad_Resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
+      </div>
+      <p class="print-only meta">korminejad.kasra@gmail.com · linkedin.com/in/kasra-korminejad · github.com/Kasrakn · Columbia, SC</p>
+    </div>
+    <img class="portrait" src="kasra.jpg" alt="Portrait of Kasra Korminejad" width="440" height="440">
+  </div>
+</div>
+
+<main>
+  <section class="inner sec" id="about">
+    <h2>About</h2>
+    <div class="body">
+      <div class="about">
+        <div class="copy">
+          <p class="big">I do research at the intersection of AI and biology. I design and train AI models that solve biological problems, from finding the genes that drive a response in RNA-seq data to predicting how proteins fold.</p>
+          <p>Working across both fields lets me turn biological questions into machine learning problems, and turn model outputs back into biological insight. The long-term goal is research that helps us understand and treat diseases like cancer. Before my PhD I spent several years as a software engineer, so I build models that are efficient and ready to deploy, not just accurate on paper.</p>
+        </div>
+        <dl class="glance">
+          <div><dt>Currently</dt><dd>PhD student at USC, advised by Dr. Homayoun Valafar</dd></div>
+          <div><dt>Focus</dt><dd>AI for genomics, gene networks and protein structure</dd></div>
+          <div><dt>Based in</dt><dd>Columbia, South Carolina</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="inner sec" id="education">
+    <h2>Education</h2>
+    <div class="body edu">
+      <div class="degree phd">
+        <h3>Ph.D. in Computer Science</h3>
+        <span class="when">Jan 2025 – 2031 (expected)</span>
+        <p>University of South Carolina · AI Institute of South Carolina · Advisor: <a href="https://www.linkedin.com/in/homayoun-valafar-b1b99434/" target="_blank" rel="noopener">Dr. Homayoun Valafar</a>. Research focus: AI and bioinformatics for genomic and proteomic data.</p>
+      </div>
+      <div class="degree bsc">
+        <h3>B.Sc. in Computer Engineering</h3>
+        <span class="when">2016 – 2021</span>
+        <p>Ferdowsi University of Mashhad</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="inner sec" id="research">
+    <h2>Research</h2>
+    <div class="body">
+      <article class="row">
+        <div class="copy">
+          <div class="kicker">Transcriptomics <span class="pill">Ongoing</span></div>
+          <h3>Machine learning for high-dimensional RNA-seq data</h3>
+          <p>I train machine learning models that find meaningful patterns in bulk RNA-seq gene expression data, alongside bioinformatics methods such as differential expression analysis. The current application is a rat study of how kynurenine changes gene expression.</p>
+          <p class="note"><strong>The core challenge is p ≫ n.</strong> Tens of thousands of genes are measured on a small number of samples, so models have to be regularized and interpretable to find real biological signal instead of noise.</p>
+          <ul class="chips"><li>Bulk RNA-seq</li><li>High-dimensional ML</li><li>DESeq2</li></ul>
+        </div>
+        <figure class="fig">
+          <canvas id="volcano" class="h-340" role="img" aria-label="Interactive volcano plot of simulated genes, log2 fold change against significance"></canvas>
+          <div class="ctl">
+            <label for="fc-thr">Fold-change cutoff <output id="fc-val">1.0</output></label>
+            <input id="fc-thr" type="range" min="0.5" max="2.5" step="0.1" value="1">
+            <span id="fc-count"></span>
+          </div>
+          <figcaption class="cap"><span>Volcano plot, simulated · hover a gene</span><span><span class="key"><i class="c-acc"></i>up</span> <span class="key"><i class="c-acc2"></i>down</span></span></figcaption>
+        </figure>
+      </article>
+
+      <article class="row">
+        <div class="copy">
+          <div class="kicker">Systems biology <span class="pill">Ongoing</span></div>
+          <h3>Gene networks across species</h3>
+          <p>Genes work in networks, not alone. This project models the relationships and interactions between genes, and how those relationships compare between different species.</p>
+          <ul class="chips"><li>Gene networks</li><li>Comparative genomics</li><li>Graph models</li></ul>
+        </div>
+        <figure class="fig">
+          <canvas id="genenet" class="h-320" role="img" aria-label="Interactive network of genes in two species with links between matching genes"></canvas>
+          <figcaption class="cap"><span>Drag a gene · hover to see its partners</span><span><span class="key"><i class="c-acc2"></i>species A</span> <span class="key"><i class="c-warm"></i>species B</span> <span class="key"><i class="c-acc"></i>conserved link</span></span></figcaption>
+        </figure>
+      </article>
+
+      <article class="row">
+        <div class="copy">
+          <div class="kicker">Structural biology <span class="pill">Ongoing</span></div>
+          <h3>Protein structure prediction beyond AlphaFold</h3>
+          <p>AlphaFold changed the field, but parts of protein structure prediction are still unsolved, including accurate side-chain placement and regions predicted with low confidence. As one of my main PhD projects, I'm extending AlphaFold2 with predicted inter-atomic bond angles as structural priors, aiming for structures reliable enough for ligand discovery and drug design.</p>
+          <ul class="chips"><li>AlphaFold2</li><li>Side chains</li><li>Geometric priors</li></ul>
+        </div>
+        <figure class="fig">
+          <canvas id="protein" class="h-340" role="img" aria-label="Rotating 3D sketch of a protein backbone colored by prediction confidence, with side chains"></canvas>
+          <div class="ctl"><label><input id="sc-toggle" type="checkbox" checked> Show side chains</label></div>
+          <figcaption class="cap"><span>Drag to rotate</span><span><span class="key"><i class="c-acc2"></i>high confidence</span> <span class="key"><i class="c-warm"></i>low confidence</span> <span class="key"><i class="c-acc"></i>side chain</span></span></figcaption>
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <section class="inner sec" id="projects">
+    <h2>Projects</h2>
+    <div class="body">
+      <article class="row">
+        <div class="copy">
+          <div class="kicker">Deep learning · Sleep-EDF</div>
+          <h3>Near real-time sleep stage classification</h3>
+          <p>A deep learning model that classifies sleep stages from EEG on the Sleep-EDF dataset. A CNN extracts features from each 30-second epoch, then an LSTM and multi-head attention layers learn patterns within and across epochs. It works with a 5 to 10 minute delay instead of needing a full night of recording, and it is small enough to deploy on edge devices.</p>
+          <div class="stats">
+            <div class="stat"><b>79.4%</b><span>macro F1</span></div>
+            <div class="stat"><b>84.7%</b><span>accuracy</span></div>
+            <div class="stat"><b>614k</b><span>parameters</span></div>
+          </div>
+          <div class="arch" aria-label="Model architecture"><b>EEG epochs</b>→<b>CNN</b>→<b>LSTM</b>→<b>Multi-head attention</b>→<b>Stage</b></div>
+        </div>
+        <figure class="fig">
+          <canvas id="sleep" class="h-340" role="img" aria-label="Animated EEG signal with a hypnogram that the model fills in a few minutes behind real time"></canvas>
+          <figcaption class="cap"><span>Simulated night · W, REM, N1, N2, N3</span><span><span class="key"><i class="c-mut"></i>true stage</span> <span class="key"><i class="c-acc"></i>model, minutes behind</span></span></figcaption>
+        </figure>
+      </article>
+
+      <article class="row">
+        <div class="copy">
+          <div class="kicker">Genomics · Algorithms</div>
+          <h3>MRA: every tandem repeat in one scan of DNA</h3>
+          <p>Tandem repeats make up about 3% of human DNA, mutate easily, and are linked to diseases such as neurodegeneration. Existing tools each cover one class of repeat. The Multi-head Reader Arm (MRA) algorithm finds exact and inexact repeats of every pattern length in a single linear-time pass: a base head and one head per pattern length move along the sequence together, comparing characters as they go.</p>
+          <p>On human chromosomes 1 to 5 (181 to 249 million bases), MRA ran faster than TRF, Mreps, Perf and Kmer-SSR while using almost no extra memory. Built at Ferdowsi University with Stanford University collaborators.</p>
+          <ul class="chips"><li>O(n) algorithm</li><li>Genomics</li><li>Human genome</li></ul>
+        </div>
+        <figure class="fig">
+          <div class="dna" id="dna" aria-label="DNA sequence being scanned for tandem repeats"></div>
+          <ul class="found" id="found" aria-live="polite"></ul>
+          <figcaption class="cap"><span><span class="key"><i class="c-acc2"></i>base head</span> · heads at +2…+5 underlined</span><span>repeats reported in one pass</span></figcaption>
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <section class="inner sec" id="publications">
+    <h2>Publications</h2>
+    <div class="body">
+      <ul class="pubs">
+        <li>
+          <h3 style="font-size:1.1rem">A Novel Multi-head Algorithm to Discover All Tandem Repeats in One Scan of DNA Sequences</h3>
+          <span>Naghibzadeh, M., <strong>Korminejad, K.</strong>, Krishnan, V., Bahmani, A.</span>
+          <span class="meta">Research Square, 2023 · under review · <a href="https://doi.org/10.21203/rs.3.rs-2879921/v1" target="_blank" rel="noopener">doi:10.21203/rs.3.rs-2879921/v1</a></span>
+        </li>
+      </ul>
+      <p class="meta no-print">All publications on <a href="https://scholar.google.com/citations?user=p_KFLkEAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>.</p>
+    </div>
+  </section>
+
+  <section class="inner sec" id="experience">
+    <h2>Experience</h2>
+    <div class="body xp">
+      <article>
+        <div class="when">Jan 2025 – now</div>
+        <div><h3>Graduate Research Assistant</h3><div class="meta">University of South Carolina · AI Institute of South Carolina · Advisor: Dr. Homayoun Valafar</div>
+        <p>Machine learning for RNA-seq data, cross-species gene networks and protein structure prediction.</p></div>
+      </article>
+      <article>
+        <div class="when">Jan 2024 – Sep 2024</div>
+        <div><h3>Back-End Software Engineer</h3><div class="meta">ParstechAI</div>
+        <ul><li>Built and maintained distributed back-end systems for large-scale chatbot infrastructure.</li><li>Refactored core services around clean-architecture principles and helped design a more resilient architecture.</li></ul></div>
+      </article>
+      <article>
+        <div class="when">Nov 2020 – Dec 2023</div>
+        <div><h3>Research Assistant, Distributed Systems Lab</h3><div class="meta">Ferdowsi University of Mashhad</div>
+        <ul><li>Co-developed MRA, a one-scan algorithm for tandem repeat discovery, with collaborators at Stanford University.</li><li>Benchmarked against state-of-the-art tools on whole human chromosomes.</li></ul></div>
+      </article>
+      <article>
+        <div class="when">Jun 2022 – Sep 2022</div>
+        <div><h3>Software Engineer</h3><div class="meta">Arta Exchange (crypto aggregator)</div>
+        <p>Real-time data and warehouse services for arbitrage analytics, with high-frequency pipelines synchronized to the millisecond across exchanges.</p></div>
+      </article>
+      <article>
+        <div class="when">Jan 2021 – Jun 2022</div>
+        <div><h3>Research Assistant, Machine Vision Lab</h3><div class="meta">Ferdowsi University of Mashhad</div>
+        <p>Deep learning models for MRI-based hand strength estimation and injury classification.</p></div>
+      </article>
+      <article>
+        <div class="when">Sep 2020 – Aug 2021</div>
+        <div><h3>Junior Full-Stack Developer</h3><div class="meta">Dezigno (e-commerce)</div>
+        <p>Front-end and back-end microservices for a print-on-demand platform: product design, orders and payments.</p></div>
+      </article>
+      <p class="sub">Teaching &amp; outreach</p>
+      <article>
+        <div class="when">Summer</div>
+        <div><h3>AI &amp; Machine Learning Bootcamp Instructor</h3><div class="meta">High school students · Richland County, South Carolina</div>
+        <p>Taught AI and machine learning to high school students during a one-week summer bootcamp.</p></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="inner sec" id="skills">
+    <h2>Skills</h2>
+    <div class="body">
+      <dl class="skills">
+        <div><dt>Machine learning</dt><dd><ul class="chips"><li>Deep learning</li><li>CNNs</li><li>LSTMs</li><li>Transformers</li><li>Attention models</li><li>Reinforcement learning</li><li>Generative sequence models</li></ul></dd></div>
+        <div><dt>Computational biology</dt><dd><ul class="chips"><li>Bioinformatics</li><li>Genomics</li><li>Molecular biology</li><li>Bulk RNA-seq</li><li>Differential expression (DESeq2)</li><li>Gene networks</li><li>Protein structure prediction</li><li>AlphaFold2</li></ul></dd></div>
+        <div><dt>Molecular dynamics</dt><dd><ul class="chips"><li>VMD</li><li>NAMD</li></ul></dd></div>
+        <div><dt>Programming</dt><dd><ul class="chips"><li>Python</li><li>C</li><li>C++</li><li>Java</li><li>JavaScript</li><li>SQL</li></ul></dd></div>
+        <div><dt>ML &amp; data tools</dt><dd><ul class="chips"><li>PyTorch</li><li>Hugging Face</li><li>NumPy</li><li>pandas</li></ul></dd></div>
+        <div><dt>Engineering</dt><dd><ul class="chips"><li>Linux</li><li>Docker</li><li>Git</li><li>AWS</li><li>Azure</li><li>FastAPI</li><li>Flask</li><li>CI/CD</li></ul></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="inner">
+      <h2>Let's connect.</h2>
+      <p>I'm always happy to talk about AI, computational biology, collaborations or new opportunities. Email or LinkedIn is the best way to reach me.</p>
+      <div class="actions">
+        <code id="email">korminejad.kasra@gmail.com</code>
+        <button class="btn" id="copy-email" type="button">Copy email</button>
+        <a class="btn" href="https://www.linkedin.com/in/kasra-korminejad/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn" href="https://scholar.google.com/citations?user=p_KFLkEAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar ↗</a>
+      </div>
+      <footer>Updated October 2026 · Columbia, South Carolina · Figures use simulated data</footer>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var T = {};
+  function readTokens() {
+    var cs = getComputedStyle(root);
+    ["bg", "surface", "ink", "muted", "line", "accent", "accent2", "warm"].forEach(function (k) { T[k] = cs.getPropertyValue("--" + k).trim(); });
+  }
+  readTokens();
+  var redraws = [];
+  function onTheme() { readTokens(); redraws.forEach(function (f) { f(); }); }
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", onTheme);
+  new MutationObserver(onTheme).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  var REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var MONO = '"JetBrains Mono", ui-monospace, monospace';
+
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function gauss(r) { var u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+  function rrect(ctx, x, y, w, h, rad) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, rad); else ctx.rect(x, y, w, h); }
+
+  // Mount a canvas: DPR sizing, redraw on resize/theme, animate only while on screen.
+  function mount(id, make) {
+    var c = document.getElementById(id); if (!c) return null;
+    var ctx = c.getContext("2d");
+    var s = { c: c, ctx: ctx, w: 0, h: 0, t: 0 };
+    var api = make(s);
+    function draw() { if (s.w) { ctx.save(); api.draw(s); ctx.restore(); } }
+    s.redraw = draw;
+    function size() {
+      var r = c.getBoundingClientRect(); if (!r.width) return;
+      var d = Math.min(2, window.devicePixelRatio || 1);
+      c.width = Math.round(r.width * d); c.height = Math.round(r.height * d);
+      ctx.setTransform(d, 0, 0, d, 0, 0); s.w = r.width; s.h = r.height;
+      if (api.resize) api.resize(s); draw();
+    }
+    new ResizeObserver(size).observe(c);
+    redraws.push(draw);
+    if (document.fonts) document.fonts.ready.then(draw);
+    if (api.step && !REDUCE) {
+      var vis = false, run = false, last = 0;
+      var loop = function (t) {
+        if (!vis) { run = false; return; }
+        var dt = Math.min(64, t - (last || t)); last = t; s.t += dt;
+        api.step(s, dt); draw(); requestAnimationFrame(loop);
+      };
+      new IntersectionObserver(function (e) { vis = e[0].isIntersecting; if (vis && !run) { run = true; last = 0; requestAnimationFrame(loop); } }).observe(c);
+    }
+    return s;
+  }
+  function pos(c, e) { var r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+
+  /* Hero: drifting gene co-expression network */
+  mount("hero-net", function (s) {
+    var r = rng(11), nodes = [], mouse = null;
+    var hero = s.c.parentElement;
+    hero.addEventListener("pointermove", function (e) { mouse = pos(s.c, e); });
+    hero.addEventListener("pointerleave", function () { mouse = null; });
+    return {
+      resize: function (s) {
+        var n = Math.max(24, Math.min(90, Math.round(s.w * s.h / 11000)));
+        while (nodes.length < n) nodes.push({ x: r() * s.w, y: r() * s.h, vx: (r() - .5) * .25, vy: (r() - .5) * .25, hot: r() < .14, rad: 1.4 + r() * 2.4 });
+        nodes.length = n;
+        nodes.forEach(function (p) { p.x = Math.min(p.x, s.w); p.y = Math.min(p.y, s.h); });
+      },
+      step: function (s, dt) {
+        var k = dt / 16;
+        nodes.forEach(function (p) {
+          if (mouse) { var dx = mouse.x - p.x, dy = mouse.y - p.y, d = Math.hypot(dx, dy); if (d < 160 && d > 1) { p.vx += dx / d * .012 * k; p.vy += dy / d * .012 * k; } }
+          p.vx *= .995; p.vy *= .995;
+          var sp = Math.hypot(p.vx, p.vy); if (sp > .6) { p.vx *= .6 / sp; p.vy *= .6 / sp; } if (sp < .08) { p.vx *= 1.05; p.vy *= 1.05; }
+          p.x += p.vx * k; p.y += p.vy * k;
+          if (p.x < 0 || p.x > s.w) p.vx *= -1; if (p.y < 0 || p.y > s.h) p.vy *= -1;
+        });
+      },
+      draw: function (s) {
+        var ctx = s.ctx; ctx.clearRect(0, 0, s.w, s.h);
+        var L = 115; ctx.lineWidth = 1;
+        for (var i = 0; i < nodes.length; i++) for (var j = i + 1; j < nodes.length; j++) {
+          var a = nodes[i], b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < L) { ctx.globalAlpha = (1 - d / L) * .35; ctx.strokeStyle = (a.hot && b.hot) ? T.accent : T.muted; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+        }
+        nodes.forEach(function (p) {
+          var near = mouse && Math.hypot(mouse.x - p.x, mouse.y - p.y) < 160;
+          ctx.globalAlpha = near ? .95 : .55; ctx.fillStyle = p.hot ? T.accent : T.accent2;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.rad * (near ? 1.5 : 1), 0, 7); ctx.fill();
+        });
+      }
+    };
+  });
+
+  /* Volcano plot of simulated genes */
+  (function () {
+    var thr = document.getElementById("fc-thr"), out = document.getElementById("fc-val"), cnt = document.getElementById("fc-count");
+    var r = rng(42), genes = [];
+    for (var i = 0; i < 1800; i++) {
+      var fc = gauss(r) * .55;
+      if (r() < .09) fc += (r() < .55 ? 1 : -1) * (.8 + r() * 2.2);
+      var p = Math.abs(fc) * (1.1 + r() * 2.4) + Math.abs(gauss(r)) * .45;
+      genes.push({ fc: Math.max(-4.4, Math.min(4.4, fc)), p: Math.min(13.5, p), name: "Gene-" + String(1000 + (i * 7919) % 9000) });
+    }
+    var hover = null, P = 2, m = { l: 42, r: 12, t: 14, b: 34 };
+    function X(s, v) { return m.l + (v + 4.5) / 9 * (s.w - m.l - m.r); }
+    function Y(s, v) { return s.h - m.b - v / 14 * (s.h - m.t - m.b); }
+    var s = mount("volcano", function () {
+      return {
+        draw: function (s) {
+          var ctx = s.ctx, F = +thr.value; ctx.clearRect(0, 0, s.w, s.h);
+          ctx.font = "10px " + MONO; ctx.fillStyle = T.muted; ctx.strokeStyle = T.line; ctx.lineWidth = 1;
+          ctx.textAlign = "center";
+          [-4, -2, 0, 2, 4].forEach(function (v) { var x = X(s, v); ctx.beginPath(); ctx.moveTo(x, m.t); ctx.lineTo(x, s.h - m.b); ctx.stroke(); ctx.fillText(v, x, s.h - m.b + 14); });
+          ctx.fillText("log2 fold change", (m.l + s.w - m.r) / 2, s.h - 4);
+          ctx.textAlign = "right";
+          [0, 4, 8, 12].forEach(function (v) { var y = Y(s, v); ctx.beginPath(); ctx.moveTo(m.l, y); ctx.lineTo(s.w - m.r, y); ctx.stroke(); ctx.fillText(v, m.l - 6, y + 3); });
+          ctx.save(); ctx.translate(11, (m.t + s.h - m.b) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.fillText("−log10 p", 0, 0); ctx.restore();
+          ctx.setLineDash([4, 4]); ctx.strokeStyle = T.muted; ctx.globalAlpha = .6;
+          [-F, F].forEach(function (v) { var x = X(s, v); ctx.beginPath(); ctx.moveTo(x, m.t); ctx.lineTo(x, s.h - m.b); ctx.stroke(); });
+          ctx.beginPath(); ctx.moveTo(m.l, Y(s, P)); ctx.lineTo(s.w - m.r, Y(s, P)); ctx.stroke(); ctx.setLineDash([]);
+          var up = 0, dn = 0;
+          genes.forEach(function (g) {
+            var sig = g.p > P && Math.abs(g.fc) > F;
+            if (sig) { if (g.fc > 0) up++; else dn++; }
+            ctx.globalAlpha = sig ? .9 : .28; ctx.fillStyle = sig ? (g.fc > 0 ? T.accent : T.accent2) : T.muted;
+            ctx.beginPath(); ctx.arc(X(s, g.fc), Y(s, g.p), sig ? 2.6 : 1.9, 0, 7); ctx.fill();
+          });
+          ctx.globalAlpha = 1;
+          cnt.textContent = up + " up · " + dn + " down of " + genes.length + " genes";
+          if (hover) {
+            var hx = X(s, hover.fc), hy = Y(s, hover.p);
+            ctx.strokeStyle = T.ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(hx, hy, 6, 0, 7); ctx.stroke();
+            var label = hover.name + "  log2FC " + hover.fc.toFixed(2) + "  p≈1e-" + hover.p.toFixed(1);
+            ctx.font = "11px " + MONO; var tw = ctx.measureText(label).width + 14;
+            var bx = Math.min(Math.max(hx - tw / 2, 4), s.w - tw - 4), by = hy > 50 ? hy - 34 : hy + 12;
+            ctx.fillStyle = T.ink; rrect(ctx, bx, by, tw, 22, 4); ctx.fill();
+            ctx.fillStyle = T.surface; ctx.textAlign = "left"; ctx.fillText(label, bx + 7, by + 15);
+          }
+        }
+      };
+    });
+    if (!s) return;
+    function nearest(e) {
+      var q = pos(s.c, e), best = null, bd = 144;
+      genes.forEach(function (g) { var dx = X(s, g.fc) - q.x, dy = Y(s, g.p) - q.y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = g; } });
+      return best;
+    }
+    s.c.addEventListener("pointermove", function (e) { hover = nearest(e); s.redraw(); });
+    s.c.addEventListener("pointerleave", function () { hover = null; s.redraw(); });
+    thr.addEventListener("input", function () { out.textContent = (+thr.value).toFixed(1); s.redraw(); });
+  })();
+
+  /* Gene network across two species */
+  (function () {
+    var r = rng(5), nodes = [], edges = [], N = 13;
+    ["A", "B"].forEach(function (sp) { for (var i = 0; i < N; i++) nodes.push({ sp: sp, x: 0, y: 0, vx: 0, vy: 0, name: (sp === "A" ? "a" : "b") + (i + 1) }); });
+    var modules = [[0, 1, 2, 3], [4, 5, 6, 7, 8], [9, 10, 11, 12]];
+    [0, N].forEach(function (off) {
+      modules.forEach(function (mod) { mod.forEach(function (a, k) { if (k) edges.push({ a: off + mod[r() * k | 0], b: off + a, t: "in" }); if (r() < .35) edges.push({ a: off + a, b: off + mod[r() * mod.length | 0], t: "in" }); }); });
+      edges.push({ a: off + 3, b: off + 4, t: "in" }); edges.push({ a: off + 8, b: off + 9, t: "in" });
+    });
+    edges = edges.filter(function (e) { return e.a !== e.b; });
+    [0, 1, 2, 4, 5, 6, 9, 11].forEach(function (i) { edges.push({ a: i, b: N + i, t: "orth" }); });
+    var drag = null, hover = null, placed = false;
+    function sim(s, k) {
+      k = Math.min(k, 2);
+      for (var i = 0; i < nodes.length; i++) for (var j = i + 1; j < nodes.length; j++) {
+        var a = nodes[i], b = nodes[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + .01, f = 320 / d2;
+        if (d2 < 40000) { a.vx += dx * f * .05; a.vy += dy * f * .05; b.vx -= dx * f * .05; b.vy -= dy * f * .05; }
+      }
+      edges.forEach(function (e) {
+        var a = nodes[e.a], b = nodes[e.b], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
+        var L = e.t === "orth" ? s.w * .42 : 46, f = (d - L) * (e.t === "orth" ? .002 : .02);
+        a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f;
+      });
+      var t = s.t * .0006;
+      nodes.forEach(function (n, i) {
+        var cx = (n.sp === "A" ? .26 : .74) * s.w;
+        n.vx += (cx - n.x) * .02; n.vy += (s.h / 2 + 10 - n.y) * .012;
+        n.vx += Math.sin(t + i * 1.7) * .02; n.vy += Math.cos(t * 1.3 + i) * .02;
+        if (n === drag) { n.vx = n.vy = 0; return; }
+        n.vx *= .82; n.vy *= .82; n.x += n.vx * k; n.y += n.vy * k;
+        n.x = Math.max(12, Math.min(s.w - 12, n.x)); n.y = Math.max(32, Math.min(s.h - 12, n.y));
+      });
+    }
+    var s = mount("genenet", function () {
+      return {
+        resize: function (s) {
+          if (placed) return; placed = true;
+          nodes.forEach(function (n) { n.x = (n.sp === "A" ? .28 : .72) * s.w + (r() - .5) * 80; n.y = s.h / 2 + (r() - .5) * 160; });
+          for (var k = 0; k < 250; k++) sim(s, 1);
+        },
+        step: function (s, dt) { sim(s, dt / 16); },
+        draw: function (s) {
+          var ctx = s.ctx; ctx.clearRect(0, 0, s.w, s.h);
+          ctx.font = "11px " + MONO; ctx.fillStyle = T.muted; ctx.textAlign = "center";
+          ctx.fillText("SPECIES A", s.w * .25, 16); ctx.fillText("SPECIES B", s.w * .75, 16);
+          var nb = {}; if (hover !== null) edges.forEach(function (e) { if (e.a === hover || e.b === hover) { nb[e.a] = nb[e.b] = 1; } });
+          edges.forEach(function (e) {
+            var a = nodes[e.a], b = nodes[e.b], on = hover !== null && (e.a === hover || e.b === hover);
+            ctx.lineWidth = on ? 2 : (e.t === "orth" ? 1.4 : 1.2);
+            if (e.t === "orth") { ctx.setLineDash([5, 4]); ctx.strokeStyle = T.accent; ctx.globalAlpha = hover === null ? .7 : on ? 1 : .15; }
+            else { ctx.setLineDash([]); ctx.strokeStyle = T.muted; ctx.globalAlpha = hover === null ? .5 : on ? .9 : .12; }
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          });
+          ctx.setLineDash([]);
+          nodes.forEach(function (n, i) {
+            var dim = hover !== null && !nb[i] && i !== hover;
+            ctx.globalAlpha = dim ? .25 : 1; ctx.fillStyle = n.sp === "A" ? T.accent2 : T.warm;
+            ctx.beginPath(); ctx.arc(n.x, n.y, i === hover ? 9 : 6.5, 0, 7); ctx.fill();
+            ctx.strokeStyle = T.surface; ctx.lineWidth = 2; ctx.stroke();
+          });
+          if (hover !== null) nodes.forEach(function (n, i) { if (i === hover || nb[i]) { ctx.globalAlpha = 1; ctx.fillStyle = T.ink; ctx.font = "10px " + MONO; ctx.fillText(n.name, n.x, n.y - 12); } });
+        }
+      };
+    });
+    if (!s) return;
+    function pick(e) { var q = pos(s.c, e), best = null, bd = 400; nodes.forEach(function (n, i) { var d = (n.x - q.x) * (n.x - q.x) + (n.y - q.y) * (n.y - q.y); if (d < bd) { bd = d; best = i; } }); return best; }
+    s.c.addEventListener("pointerdown", function (e) { var i = pick(e); if (i !== null) { drag = nodes[i]; hover = i; s.c.setPointerCapture(e.pointerId); } });
+    s.c.addEventListener("pointermove", function (e) {
+      if (drag) { var q = pos(s.c, e); drag.x = q.x; drag.y = q.y; } else hover = pick(e);
+      s.c.style.cursor = hover !== null ? "grab" : "default"; if (REDUCE) s.redraw();
+    });
+    s.c.addEventListener("pointerup", function () { drag = null; });
+    s.c.addEventListener("pointerleave", function () { if (!drag) { hover = null; s.redraw(); } });
+  })();
+
+  /* Protein backbone with side chains, colored by confidence */
+  (function () {
+    var r = rng(3), pts = [], conf = [];
+    function add(x, y, z, c) { pts.push([x, y, z]); conf.push(c); }
+    var i, last;
+    for (i = 0; i < 15; i++) { var a = i * 1.745; add(-7 + 2.3 * Math.cos(a), -11 + 1.5 * i, 2.3 * Math.sin(a), .9); }
+    last = pts[pts.length - 1];
+    for (i = 1; i <= 5; i++) { var u = i / 6; add(last[0] + (-1 - last[0]) * u, last[1] + (12 - last[1]) * u + Math.sin(u * Math.PI) * 4, last[2] + Math.sin(u * Math.PI) * 5, .35 + r() * .15); }
+    for (i = 0; i < 7; i++) add(0, 11 - i * 3.3, (i % 2 ? .7 : -.7), .85);
+    add(2.4, -12.5, 1.5, .6); add(4.6, -11.5, 0, .6);
+    for (i = 0; i < 7; i++) add(4.8, -9 + i * 3.3, (i % 2 ? -.7 : .7), .82);
+    last = pts[pts.length - 1];
+    for (i = 1; i <= 5; i++) { var v = i / 6; add(last[0] + (9 - last[0]) * v + Math.sin(v * Math.PI) * 3, last[1] + 3 * Math.sin(v * Math.PI), last[2] - Math.sin(v * Math.PI) * 6, .3 + r() * .2); }
+    for (i = 0; i < 13; i++) { var b = i * 1.745; add(10 + 2.3 * Math.cos(b), 11 - 1.5 * i, -2 + 2.3 * Math.sin(b), i > 9 ? .55 : .88); }
+    var c = [0, 0, 0]; pts.forEach(function (p) { c[0] += p[0]; c[1] += p[1]; c[2] += p[2]; });
+    c = c.map(function (v) { return v / pts.length; });
+    pts = pts.map(function (p) { return [p[0] - c[0], p[1] - c[1], p[2] - c[2]]; });
+    var R = 0; pts.forEach(function (p) { R = Math.max(R, Math.hypot(p[0], p[1], p[2])); });
+    var sc = [];
+    pts.forEach(function (p, k) {
+      if (k === 0 || k === pts.length - 1 || r() < .25) { sc.push(null); return; }
+      var a = pts[k - 1], b = pts[k + 1], mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2];
+      var d = [p[0] - mid[0], p[1] - mid[1], p[2] - mid[2]], n = Math.hypot(d[0], d[1], d[2]) || 1, L = 1.2 + r() * 2.4;
+      var e1 = [p[0] + d[0] / n * L, p[1] + d[1] / n * L, p[2] + d[2] / n * L];
+      var e2 = r() < .4 ? [e1[0] + (r() - .5) * 1.6, e1[1] + (r() - .5) * 1.6, e1[2] + d[2] / n * 1.2] : null;
+      sc.push([e1, e2]);
+    });
+    var rotY = .6, rotX = -.35, drag = null, show = document.getElementById("sc-toggle");
+    function proj(s, p) {
+      var cy = Math.cos(rotY), sy = Math.sin(rotY), cx = Math.cos(rotX), sx = Math.sin(rotX);
+      var x = p[0] * cy + p[2] * sy, z = -p[0] * sy + p[2] * cy, y = p[1] * cx - z * sx; z = p[1] * sx + z * cx;
+      var f = 1 / (1 + z / (R * 4)), S = Math.min(s.w, s.h) * .44 / R;
+      return { x: s.w / 2 + x * S * f, y: s.h / 2 + y * S * f, z: z, f: f };
+    }
+    function confCol(v) { return v > .7 ? T.accent2 : v > .5 ? T.muted : T.warm; }
+    var s = mount("protein", function () {
+      return {
+        step: function (s, dt) { if (!drag) rotY += dt * .00035; },
+        draw: function (s) {
+          var ctx = s.ctx; ctx.clearRect(0, 0, s.w, s.h);
+          var P = pts.map(function (p) { return proj(s, p); }), segs = [];
+          for (var k = 0; k < P.length - 1; k++) segs.push({ a: P[k], b: P[k + 1], z: (P[k].z + P[k + 1].z) / 2, col: confCol((conf[k] + conf[k + 1]) / 2), w: 4.2 });
+          if (show.checked) sc.forEach(function (e, k) {
+            if (!e) return; var a = P[k], b = proj(s, e[0]);
+            segs.push({ a: a, b: b, z: (a.z + b.z) / 2, col: T.accent, w: 1.6, end: !e[1] });
+            if (e[1]) { var d = proj(s, e[1]); segs.push({ a: b, b: d, z: (b.z + d.z) / 2, col: T.accent, w: 1.6, end: true }); }
+          });
+          segs.sort(function (p, q) { return q.z - p.z; });
+          ctx.lineCap = "round";
+          segs.forEach(function (g) {
+            ctx.globalAlpha = Math.max(.3, Math.min(1, .7 - g.z / (R * 2)));
+            ctx.strokeStyle = g.col; ctx.lineWidth = g.w * g.a.f;
+            ctx.beginPath(); ctx.moveTo(g.a.x, g.a.y); ctx.lineTo(g.b.x, g.b.y); ctx.stroke();
+            if (g.end) { ctx.fillStyle = g.col; ctx.beginPath(); ctx.arc(g.b.x, g.b.y, 2.4 * g.b.f, 0, 7); ctx.fill(); }
+          });
+        }
+      };
+    });
+    if (!s) return;
+    s.c.style.cursor = "grab";
+    s.c.addEventListener("pointerdown", function (e) { drag = pos(s.c, e); s.c.setPointerCapture(e.pointerId); s.c.style.cursor = "grabbing"; });
+    s.c.addEventListener("pointermove", function (e) { if (!drag) return; var q = pos(s.c, e); rotY += (q.x - drag.x) * .01; rotX = Math.max(-1.4, Math.min(1.4, rotX + (q.y - drag.y) * .01)); drag = q; s.redraw(); });
+    s.c.addEventListener("pointerup", function () { drag = null; s.c.style.cursor = "grab"; });
+    show.addEventListener("change", function () { s.redraw(); });
+  })();
+
+  /* Sleep staging: live EEG and a hypnogram filled in a few minutes behind */
+  (function () {
+    var names = ["W", "REM", "N1", "N2", "N3"];
+    var stages = "0022334443311223344433222111022233343221112223332211122332211100".split("").map(Number);
+    var E = stages.length, DELAY = 1, WIN = 3, now = 40;
+    function hash(n) { var x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); }
+    function eeg(tt) {
+      var st = stages[Math.max(0, Math.min(E - 1, Math.floor(tt)))], u = tt * 30, n = hash(Math.floor(u * 40)) - .5;
+      if (st === 0) return .28 * Math.sin(u * 62) + .18 * Math.sin(u * 91 + 1) + .3 * n;
+      if (st === 1) return .3 * (((u * 6) % 1) - .5) + .2 * Math.sin(u * 40) + .25 * n;
+      if (st === 2) return .35 * Math.sin(u * 32) + .15 * Math.sin(u * 47) + .25 * n;
+      if (st === 3) { var sp = Math.sin(u * 1.3) > .93 ? .45 * Math.sin(u * 80) : 0; return .3 * Math.sin(u * 24) + sp + .2 * n; }
+      return .85 * Math.sin(u * 7) + .3 * Math.sin(u * 4.3 + 2) + .15 * n;
+    }
+    mount("sleep", function () {
+      return {
+        step: function (s, dt) { now += dt / 1000 * .9; if (now > E + 2) now = WIN; },
+        draw: function (s) {
+          var ctx = s.ctx; ctx.clearRect(0, 0, s.w, s.h);
+          var top = s.h * .42, l = 36, rgt = s.w - 8, tn = Math.min(now, E);
+          ctx.font = "10px " + MONO; ctx.fillStyle = T.muted; ctx.textAlign = "left";
+          ctx.fillText("EEG · last " + (WIN * 7.5) + " min", l, 13);
+          ctx.strokeStyle = T.ink; ctx.lineWidth = 1.1; ctx.globalAlpha = .85; ctx.beginPath();
+          for (var x = l; x <= rgt; x += 1) { var tt = tn - (rgt - x) / (rgt - l) * WIN, yv = top / 2 + 10 - eeg(tt) * top * .33; if (x === l) ctx.moveTo(x, yv); else ctx.lineTo(x, yv); }
+          ctx.stroke(); ctx.globalAlpha = 1;
+          var cur = stages[Math.max(0, Math.min(E - 1, Math.floor(tn - DELAY)))], pill = "model: " + names[cur];
+          ctx.font = "11px " + MONO; var pw = ctx.measureText(pill).width + 16;
+          ctx.fillStyle = T.accent; rrect(ctx, rgt - pw, 0, pw, 20, 10); ctx.fill();
+          ctx.fillStyle = T.surface; ctx.fillText(pill, rgt - pw + 8, 14);
+          var hy0 = top + 24, hh = s.h - hy0 - 22;
+          function X(e) { return l + e / E * (rgt - l); }
+          function Y(st) { return hy0 + st / 4 * hh; }
+          ctx.font = "10px " + MONO; ctx.fillStyle = T.muted; ctx.strokeStyle = T.line; ctx.lineWidth = 1; ctx.textAlign = "right";
+          names.forEach(function (nm, k) { ctx.fillText(nm, l - 6, Y(k) + 3); ctx.beginPath(); ctx.moveTo(l, Y(k)); ctx.lineTo(rgt, Y(k)); ctx.stroke(); });
+          ctx.textAlign = "center";
+          for (var hr = 0; hr <= 8; hr += 2) ctx.fillText(hr + "h", X(hr / 8 * E), s.h - 5);
+          function trace(upto, col, w, a) {
+            if (upto <= 0) return;
+            ctx.strokeStyle = col; ctx.lineWidth = w; ctx.globalAlpha = a; ctx.beginPath();
+            for (var e = 0; e < Math.min(upto, E); e++) { var y = Y(stages[e]); if (e === 0) ctx.moveTo(X(0), y); else ctx.lineTo(X(e), y); ctx.lineTo(X(Math.min(e + 1, upto)), y); }
+            ctx.stroke(); ctx.globalAlpha = 1;
+          }
+          trace(tn, T.muted, 4, .3);
+          trace(tn - DELAY, T.accent, 2, 1);
+          var xn = X(tn); ctx.strokeStyle = T.ink; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(xn, hy0 - 8); ctx.lineTo(xn, hy0 + hh); ctx.stroke(); ctx.setLineDash([]);
+          var right = xn > s.w - 60; ctx.fillStyle = T.ink; ctx.textAlign = right ? "right" : "left"; ctx.fillText("now", xn + (right ? -4 : 4), hy0 - 10);
+        }
+      };
+    });
+  })();
+
+  /* MRA: a base head plus one head per pattern length, moving together in one pass */
+  (function () {
+    var box = document.getElementById("dna"), list = document.getElementById("found"); if (!box) return;
+    var r = rng(21), B = "ACGT", seq = "", reps = [], HEADS = [2, 3, 4, 5];
+    function rnd(n) { var o = ""; for (var i = 0; i < n; i++) o += B[r() * 4 | 0]; return o; }
+    function plant(unit, times) { reps.push({ start: seq.length, len: unit.length * times, p: unit.length, label: "(" + unit + ")×" + times }); seq += unit.repeat(times); }
+    seq += rnd(7); plant("CAG", 5); seq += rnd(9); plant("AT", 6); seq += rnd(6); plant("GGTCA", 3); seq += rnd(8); plant("TTAG", 3); seq += rnd(5);
+    var spans = seq.split("").map(function (ch) { var sp = document.createElement("span"); sp.textContent = ch; box.appendChild(sp); return sp; });
+    var hit = new Array(seq.length).fill(false), seen = new Array(seq.length).fill(false);
+    function render(i) {
+      spans.forEach(function (sp, k) { sp.className = hit[k] ? "hit" : seen[k] ? "seen" : ""; });
+      if (i < 0 || i >= seq.length) return;
+      spans[i].className = "base";
+      HEADS.forEach(function (p) { var j = i + p; if (j < seq.length) spans[j].className += (seq[j] === seq[i] ? " head match" : " head"); });
+    }
+    function report(rp) { for (var k = rp.start; k < rp.start + rp.len; k++) hit[k] = true; var li = document.createElement("li"); li.textContent = rp.label + " at " + (rp.start + 1); list.appendChild(li); }
+    // resting frame: arm parked mid-scan with the repeats found so far
+    var REST = 30;
+    for (var k = 0; k < REST; k++) seen[k] = true;
+    reps.forEach(function (rp) { if (rp.start + rp.len - rp.p <= REST) report(rp); });
+    render(REST);
+    if (REDUCE) return;
+    var i = REST, done = {}, visible = false;
+    reps.forEach(function (rp, j) { if (rp.start + rp.len - rp.p <= REST) done[j] = 1; });
+    new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(box);
+    setInterval(function () {
+      if (!visible) return;
+      i++;
+      if (i >= seq.length + 20) { i = 0; done = {}; list.textContent = ""; hit.fill(false); seen.fill(false); }
+      if (i < seq.length) seen[i] = true;
+      reps.forEach(function (rp, j) { if (!done[j] && i === rp.start + rp.len - rp.p) { done[j] = 1; report(rp); } });
+      render(i);
+    }, 130);
+  })();
+
+  /* Copy email */
+  var btn = document.getElementById("copy-email");
+  btn.addEventListener("click", function () {
+    var el = document.getElementById("email");
+    function done(t) { btn.textContent = t; setTimeout(function () { btn.textContent = "Copy email"; }, 1600); }
+    function select() { var rg = document.createRange(); rg.selectNodeContents(el); var sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg); done("Selected"); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(el.textContent).then(function () { done("Copied"); }, select); else select();
+  });
+})();
+</script>
+</body>
+</html>
