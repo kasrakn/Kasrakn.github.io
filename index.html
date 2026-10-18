@@ -66,7 +66,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 /* hero */
 .hero { position: relative; overflow: hidden; }
 #hero-net { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: .8; }
-.hero .inner { position: relative; padding-block: 4.5rem 4rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3rem; align-items: center; pointer-events: none; }
+.hero .inner { position: relative; padding-block: 4.5rem 9rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3rem; align-items: center; pointer-events: none; }
 .hero .inner > * { pointer-events: auto; }
 .hero-copy { display: grid; gap: 1.3rem; min-width: 0; }
 .role { font-family: var(--mono); font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent2); margin: 0; }
@@ -191,7 +191,7 @@ p { margin: 0; max-width: 64ch; }
 }
 @media (max-width: 760px) {
   .row, .about { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; }
-  .hero .inner { grid-template-columns: minmax(0, 1fr); gap: 2rem; padding-block: 2.5rem 3rem; }
+  .hero .inner { grid-template-columns: minmax(0, 1fr); gap: 2rem; padding-block: 2.5rem 8rem; }
   .portrait { order: -1; width: 140px; justify-self: start; }
   .xp article, .skills div { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
   .degree { grid-template-columns: minmax(0, 1fr); }
@@ -530,8 +530,11 @@ p { margin: 0; max-width: 64ch; }
   }
   function pos(c, e) { var r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
 
+  // Hero background: "helix" (DNA unzipping into a neural network) or "network" (the earlier drifting gene network).
+  var HERO = "helix";
+
   /* Hero: drifting gene co-expression network */
-  mount("hero-net", function (s) {
+  if (HERO === "network") mount("hero-net", function (s) {
     var r = rng(11), nodes = [], mouse = null;
     var hero = s.c.parentElement;
     hero.addEventListener("pointermove", function (e) { mouse = pos(s.c, e); });
@@ -565,6 +568,100 @@ p { margin: 0; max-width: 64ch; }
           ctx.globalAlpha = near ? .95 : .55; ctx.fillStyle = p.hot ? T.accent : T.accent2;
           ctx.beginPath(); ctx.arc(p.x, p.y, p.rad * (near ? 1.5 : 1), 0, 7); ctx.fill();
         });
+      }
+    };
+  });
+
+  /* Hero: a DNA double helix that unzips into a neural network (genomics → AI) */
+  if (HERO === "helix") mount("hero-net", function (s) {
+    var r = rng(17), seq = [], pulses = [], layers = [], phase = 0, mouse = null, spawn = 0, G = {};
+    for (var i = 0; i < 400; i++) seq.push("ATGC"[r() * 4 | 0]);
+    var PAIR = { A: "T", T: "A", G: "C", C: "G" };
+    function baseCol(b) { return b === "A" ? T.accent : b === "T" ? T.warm : b === "G" ? T.accent2 : T.muted; }
+    var hero = s.c.parentElement;
+    hero.addEventListener("pointermove", function (e) { mouse = pos(s.c, e); });
+    hero.addEventListener("pointerleave", function () { mouse = null; });
+    function seed(s) { for (var k = 0; k < 14; k++) { s.t += 300; step(s, 300); } }
+    function step(s, dt) {
+      phase += dt * .0008 * (mouse && mouse.x < G.x1 ? 2.5 : 1);
+      spawn += dt;
+      if (spawn > 170) {
+        spawn = 0; var L0 = layers[0], b = seq[r() * seq.length | 0];
+        pulses.push({ li: -1, from: { x: G.x1 + 20, y: G.cy + (r() - .5) * G.A * 2.6 }, to: L0[r() * L0.length | 0], t: 0, col: baseCol(b) });
+      }
+      pulses.forEach(function (p) {
+        p.t += dt / 650;
+        if (p.t >= 1) {
+          p.to.glow = 1; var nl = p.li + 2;
+          if (nl < layers.length) { p.li++; p.from = p.to; p.to = layers[nl][r() * layers[nl].length | 0]; p.t = 0; } else p.dead = true;
+        }
+      });
+      pulses = pulses.filter(function (p) { return !p.dead; });
+      layers.forEach(function (L) { L.forEach(function (n) { n.glow *= Math.pow(.94, dt / 16); }); });
+    }
+    return {
+      resize: function (s) {
+        var narrow = s.w < 760;
+        G.A = Math.min(48, s.h * .09); G.cy = s.h - G.A - (narrow ? 22 : 34); G.ny = narrow ? G.cy - G.A * 1.4 : s.h * .5; G.x1 = s.w * (narrow ? .58 : .55);
+        var lx = narrow ? [.7, .83, .95] : [.65, .75, .85, .95], ln = narrow ? [5, 6, 3] : [6, 8, 7, 4];
+        layers = lx.map(function (fx, li) {
+          var n = ln[li], span = Math.min(narrow ? G.A * 3 : s.h * .78, n * 46), arr = [];
+          for (var k = 0; k < n; k++) arr.push({ x: fx * s.w, y: G.ny - span / 2 + span * (k + .5) / n, glow: 0 });
+          return arr;
+        });
+        pulses = []; seed(s);
+      },
+      step: step,
+      draw: function (s) {
+        var ctx = s.ctx; ctx.clearRect(0, 0, s.w, s.h);
+        var pts = [], dx = 15;
+        for (var x = -dx, i = 0; x < G.x1 + 90; x += dx, i++) {
+          var u = Math.max(0, (x - (G.x1 - 140)) / 230), sp = 1 + u * u * 2.2, ph = x * .03 + phase;
+          pts.push({ x: x, y1: G.cy + G.A * Math.sin(ph) * sp, y2: G.cy - G.A * Math.sin(ph) * sp, z: Math.cos(ph), b: seq[i % seq.length], u: Math.min(1, u) });
+        }
+        ctx.lineCap = "round";
+        // base pairs
+        pts.forEach(function (p) {
+          if (p.u > .55) return;
+          var a = (1 - p.u / .55) * (.22 + .3 * (1 - Math.abs(p.z))), my = (p.y1 + p.y2) / 2;
+          ctx.lineWidth = 2.2; ctx.globalAlpha = a;
+          ctx.strokeStyle = baseCol(p.b); ctx.beginPath(); ctx.moveTo(p.x, p.y1); ctx.lineTo(p.x, my); ctx.stroke();
+          ctx.strokeStyle = baseCol(PAIR[p.b]); ctx.beginPath(); ctx.moveTo(p.x, my); ctx.lineTo(p.x, p.y2); ctx.stroke();
+        });
+        // backbones, shaded by depth
+        [1, -1].forEach(function (side) {
+          for (var k = 0; k < pts.length - 1; k++) {
+            var p = pts[k], q = pts[k + 1], z = side * (p.z + q.z) / 2, fade = 1 - (p.u + q.u) / 2;
+            ctx.globalAlpha = Math.max(0, (.2 + .45 * (z + 1) / 2) * fade);
+            ctx.strokeStyle = side > 0 ? T.accent2 : T.accent; ctx.lineWidth = 1.4 + 1.6 * (z + 1) / 2;
+            ctx.beginPath(); ctx.moveTo(p.x, side > 0 ? p.y1 : p.y2); ctx.lineTo(q.x, side > 0 ? q.y1 : q.y2); ctx.stroke();
+          }
+        });
+        // unzipped strand ends reach into the first layer
+        var L0 = layers[0];
+        pts.forEach(function (p) {
+          if (p.u < .35 || p.u > .9) return;
+          L0.forEach(function (n) {
+            ctx.globalAlpha = .07; ctx.strokeStyle = T.muted; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(p.x, p.y1); ctx.lineTo(n.x, n.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(p.x, p.y2); ctx.lineTo(n.x, n.y); ctx.stroke();
+          });
+        });
+        // network
+        ctx.lineWidth = 1; ctx.strokeStyle = T.muted;
+        for (var li = 0; li < layers.length - 1; li++) layers[li].forEach(function (a) { layers[li + 1].forEach(function (b) {
+          ctx.globalAlpha = .1 + .25 * Math.max(a.glow, b.glow) * .6; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }); });
+        pulses.forEach(function (p) {
+          var e = p.t * p.t * (3 - 2 * p.t), x = p.from.x + (p.to.x - p.from.x) * e, y = p.from.y + (p.to.y - p.from.y) * e;
+          ctx.globalAlpha = .9; ctx.fillStyle = p.col; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 7); ctx.fill();
+          ctx.globalAlpha = .25; ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.fill();
+        });
+        layers.forEach(function (L) { L.forEach(function (n) {
+          if (n.glow > .05) { ctx.globalAlpha = .25 * n.glow; ctx.fillStyle = T.accent; ctx.beginPath(); ctx.arc(n.x, n.y, 12, 0, 7); ctx.fill(); }
+          ctx.globalAlpha = .55 + .4 * n.glow; ctx.fillStyle = T.surface; ctx.strokeStyle = n.glow > .3 ? T.accent : T.accent2; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 5, 0, 7); ctx.fill(); ctx.stroke();
+        }); });
       }
     };
   });
